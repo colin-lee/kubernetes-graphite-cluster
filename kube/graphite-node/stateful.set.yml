@@ -14,6 +14,7 @@ spec:
       containers:
       - name: {{APP_NAME}}
         image: {{IMAGE_NAME}}
+        imagePullPolicy: Always
         env:
           - name: CURATOR_RETENTION
             value: "{{CURATOR_RETENTION}}"

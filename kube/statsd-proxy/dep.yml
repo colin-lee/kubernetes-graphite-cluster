@@ -12,6 +12,7 @@ spec:
       containers:
         - name: {{APP_NAME}}
           image: {{IMAGE_NAME}}
+          imagePullPolicy: Always
           ports:
           - containerPort: 8125
             name: incoming-udp
