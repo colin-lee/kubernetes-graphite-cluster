@@ -30,6 +30,8 @@ spec:
   volumeClaimTemplates:
   - metadata:
       name: graphite-node-pv
+      annotations:
+        volume.beta.kubernetes.io/storage-class: ceph-rbd-default
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:

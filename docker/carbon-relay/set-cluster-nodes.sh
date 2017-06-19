@@ -5,7 +5,7 @@ set -u
 
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
-STATEFUL_SETS=$(curl -f -k https://kubernetes/apis/apps/v1beta1/statefulsets -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)")
+STATEFUL_SETS=$(curl -f -k https://kubernetes.default/apis/apps/v1beta1/statefulsets -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)")
 GRAPHITE_NODES_SS=$(echo $STATEFUL_SETS | jq '.items[] | select(.metadata.name == "graphite-node")')
 REPLICAS=$(echo $GRAPHITE_NODES_SS | jq .spec.replicas)
 SERVICE_NAME=$(echo $GRAPHITE_NODES_SS | jq .spec.serviceName | tr -d '"')

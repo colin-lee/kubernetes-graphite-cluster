@@ -1,6 +1,7 @@
 DOCKER_REPOSITORY?=nanit
 SUDO?=sudo
 
+KUBE_NAMESPACE?=kube-system
 STATSD_PROXY_APP_NAME=statsd
 STATSD_PROXY_DIR_NAME=statsd-proxy
 STATSD_PROXY_DOCKER_DIR=docker/$(STATSD_PROXY_DIR_NAME)
@@ -18,12 +19,15 @@ define generate-statsd-proxy-dep
 endef
 
 deploy-statsd-proxy: docker-statsd-proxy
-	kubectl get svc $(STATSD_PROXY_APP_NAME) || $(call generate-statsd-proxy-svc) | kubectl create -f -
-	$(call generate-statsd-proxy-dep) | kubectl apply -f -
+	kubectl -n ${KUBE_NAMESPACE} get svc $(STATSD_PROXY_APP_NAME) || $(call generate-statsd-proxy-svc) | kubectl -n ${KUBE_NAMESPACE} create -f -
+	$(call generate-statsd-proxy-dep) | kubectl -n ${KUBE_NAMESPACE} apply -f -
 
 docker-statsd-proxy:
 	$(SUDO) docker pull $(STATSD_PROXY_IMAGE_NAME) || ($(SUDO) docker build -t $(STATSD_PROXY_IMAGE_NAME) $(STATSD_PROXY_DOCKER_DIR) && $(SUDO) docker push $(STATSD_PROXY_IMAGE_NAME))
 
+clean-statsd-proxy: 
+	kubectl -n ${KUBE_NAMESPACE} get svc $(STATSD_PROXY_APP_NAME) && $(call generate-statsd-proxy-svc) | kubectl -n ${KUBE_NAMESPACE} delete -f -
+	$(call generate-statsd-proxy-dep) | kubectl -n ${KUBE_NAMESPACE} delete -f -
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 STATSD_DAEMON_APP_NAME=statsd-daemon
 STATSD_DAEMON_DIR_NAME=statsd-daemon
@@ -42,12 +46,15 @@ define generate-statsd-daemon-ss
 endef
 
 deploy-statsd-daemon: docker-statsd-daemon
-	kubectl get svc $(STATSD_DAEMON_APP_NAME) || $(call generate-statsd-daemon-svc) | kubectl create -f -
-	$(call generate-statsd-daemon-ss) | kubectl apply -f -
+	kubectl -n ${KUBE_NAMESPACE} get svc $(STATSD_DAEMON_APP_NAME) || $(call generate-statsd-daemon-svc) | kubectl -n ${KUBE_NAMESPACE} create -f -
+	$(call generate-statsd-daemon-ss) | kubectl -n ${KUBE_NAMESPACE} apply -f -
 
 docker-statsd-daemon:
 	$(SUDO) docker pull $(STATSD_DAEMON_IMAGE_NAME) || ($(SUDO) docker build -t $(STATSD_DAEMON_IMAGE_NAME) $(STATSD_DAEMON_DOCKER_DIR) && $(SUDO) docker push $(STATSD_DAEMON_IMAGE_NAME))
 
+clean-statsd-daemon: 
+	kubectl -n ${KUBE_NAMESPACE} get svc $(STATSD_DAEMON_APP_NAME) && $(call generate-statsd-daemon-svc) | kubectl -n ${KUBE_NAMESPACE} delete -f -
+	$(call generate-statsd-daemon-ss) | kubectl -n ${KUBE_NAMESPACE} delete -f -
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 CARBON_RELAY_APP_NAME=carbon-relay
 CARBON_RELAY_DIR_NAME=carbon-relay
@@ -66,11 +73,15 @@ define generate-carbon-relay-dep
 endef
 
 deploy-carbon-relay: docker-carbon-relay
-	kubectl get svc $(CARBON_RELAY_APP_NAME) || $(call generate-carbon-relay-svc) | kubectl create -f -
-	$(call generate-carbon-relay-dep) | kubectl apply -f -
+	kubectl -n ${KUBE_NAMESPACE} get svc $(CARBON_RELAY_APP_NAME) || $(call generate-carbon-relay-svc) | kubectl -n ${KUBE_NAMESPACE} create -f -
+	$(call generate-carbon-relay-dep) | kubectl -n ${KUBE_NAMESPACE} apply -f -
 
 docker-carbon-relay:
 	$(SUDO) docker pull $(CARBON_RELAY_IMAGE_NAME) || ($(SUDO) docker build -t $(CARBON_RELAY_IMAGE_NAME) $(CARBON_RELAY_DOCKER_DIR) && $(SUDO) docker push $(CARBON_RELAY_IMAGE_NAME))
+
+clean-carbon-relay: 
+	kubectl -n ${KUBE_NAMESPACE} get svc $(CARBON_RELAY_APP_NAME) && $(call generate-carbon-relay-svc) | kubectl -n ${KUBE_NAMESPACE} delete -f -
+	$(call generate-carbon-relay-dep) | kubectl -n ${KUBE_NAMESPACE} delete -f -
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 GRAPHITE_NODE_APP_NAME=graphite-node
@@ -93,11 +104,15 @@ define generate-graphite-node-dep
 endef
 
 deploy-graphite-node: docker-graphite-node
-	kubectl get svc $(GRAPHITE_NODE_APP_NAME) || $(call generate-graphite-node-svc) | kubectl create -f -
-	$(call generate-graphite-node-dep) | kubectl apply -f -
+	kubectl -n ${KUBE_NAMESPACE} get svc $(GRAPHITE_NODE_APP_NAME) || $(call generate-graphite-node-svc) | kubectl -n ${KUBE_NAMESPACE} create -f -
+	$(call generate-graphite-node-dep) | kubectl -n ${KUBE_NAMESPACE} apply -f -
 
 docker-graphite-node:
 	$(SUDO) docker pull $(GRAPHITE_NODE_IMAGE_NAME) || ($(SUDO) docker build -t $(GRAPHITE_NODE_IMAGE_NAME) $(GRAPHITE_NODE_DOCKER_DIR) && $(SUDO) docker push $(GRAPHITE_NODE_IMAGE_NAME))
+
+clean-graphite-node: 
+	kubectl -n ${KUBE_NAMESPACE} get svc $(GRAPHITE_NODE_APP_NAME) && $(call generate-graphite-node-svc) | kubectl -n ${KUBE_NAMESPACE} delete -f -
+	$(call generate-graphite-node-dep) | kubectl -n ${KUBE_NAMESPACE} delete -f -
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
 GRAPHITE_MASTER_APP_NAME=graphite
@@ -117,11 +132,17 @@ define generate-graphite-master-dep
 endef
 
 deploy-graphite-master: docker-graphite-master
-	kubectl get svc $(GRAPHITE_MASTER_APP_NAME) || $(call generate-graphite-master-svc) | kubectl create -f -
-	$(call generate-graphite-master-dep) | kubectl apply -f -
+	kubectl -n ${KUBE_NAMESPACE} get svc $(GRAPHITE_MASTER_APP_NAME) || $(call generate-graphite-master-svc) | kubectl -n ${KUBE_NAMESPACE} create -f -
+	$(call generate-graphite-master-dep) | kubectl -n ${KUBE_NAMESPACE} apply -f -
 
 docker-graphite-master:
 	$(SUDO) docker pull $(GRAPHITE_MASTER_IMAGE_NAME) || ($(SUDO) docker build -t $(GRAPHITE_MASTER_IMAGE_NAME) $(GRAPHITE_MASTER_DOCKER_DIR) && $(SUDO) docker push $(GRAPHITE_MASTER_IMAGE_NAME))
 
+clean-graphite-master: 
+	kubectl -n ${KUBE_NAMESPACE} get svc $(GRAPHITE_MASTER_APP_NAME) && $(call generate-graphite-master-svc) | kubectl -n ${KUBE_NAMESPACE} delete -f -
+	$(call generate-graphite-master-dep) | kubectl -n ${KUBE_NAMESPACE} delete -f -
 
+
+images: docker-graphite-node docker-statsd-daemon docker-statsd-proxy docker-carbon-relay docker-graphite-master
 deploy: deploy-graphite-node deploy-statsd-daemon deploy-statsd-proxy deploy-carbon-relay deploy-graphite-master
+clean: clean-graphite-node clean-statsd-daemon clean-statsd-proxy clean-carbon-relay clean-graphite-master

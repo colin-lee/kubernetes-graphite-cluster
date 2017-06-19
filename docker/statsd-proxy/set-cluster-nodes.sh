@@ -6,7 +6,7 @@ set -x
 
 function join_by { local IFS="$1"; shift; echo "$*"; }
 
-STATEFUL_SETS=$(curl -f -k https://kubernetes/apis/apps/v1beta1/statefulsets -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)")
+STATEFUL_SETS=$(curl -f -k https://kubernetes.default/apis/apps/v1beta1/statefulsets -H "Authorization: Bearer $(cat /var/run/secrets/kubernetes.io/serviceaccount/token)")
 STATSD_NODES_SS=$(echo $STATEFUL_SETS | jq '.items[] | select(.metadata.name == "statsd-daemon")')
 REPLICAS=$(echo $STATSD_NODES_SS | jq .spec.replicas)
 REPLICAS=$((REPLICAS-1))
