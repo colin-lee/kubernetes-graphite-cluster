@@ -9,8 +9,6 @@ spec:
     metadata:
       labels:
         app: {{APP_NAME}}
-      annotations:
-        pod.alpha.kubernetes.io/initialized: "true"
     spec:
       terminationGracePeriodSeconds: 10
       containers:
