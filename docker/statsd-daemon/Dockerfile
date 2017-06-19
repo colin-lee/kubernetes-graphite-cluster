@@ -1,4 +1,5 @@
 FROM node:8-alpine
+RUN echo "http://mirrors.aliyun.com/alpine/v3.6/main/" > /etc/apk/repositories
 RUN apk add --update git
 RUN mkdir -p /app
 WORKDIR /app
