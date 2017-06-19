@@ -9,6 +9,8 @@ spec:
     metadata:
       labels:
         app: {{APP_NAME}}
+      annotations:
+        pod.alpha.kubernetes.io/initialized: "true"
     spec:
       terminationGracePeriodSeconds: 10
       containers:
@@ -26,11 +28,11 @@ spec:
           name: pickle
           protocol: TCP
         volumeMounts:
-        - name: graphite-node-pv
+        - name: data
           mountPath: /opt/graphite/storage/whisper
   volumeClaimTemplates:
   - metadata:
-      name: graphite-node-pv
+      name: data
       annotations:
         volume.beta.kubernetes.io/storage-class: ceph-rbd-default
     spec:
