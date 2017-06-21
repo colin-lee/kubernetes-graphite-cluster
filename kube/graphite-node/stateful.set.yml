@@ -25,6 +25,13 @@ spec:
         - containerPort: 2004
           name: pickle
           protocol: TCP
+        resources:
+          limits:
+            cpu: 2000m
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
         volumeMounts:
         - name: graphite-node-pv
           mountPath: /opt/graphite/storage/whisper
