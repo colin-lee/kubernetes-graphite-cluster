@@ -33,11 +33,11 @@ spec:
             cpu: 500m
             memory: 1Gi
         volumeMounts:
-        - name: graphite-node-pv
+        - name: data
           mountPath: /opt/graphite/storage/whisper
   volumeClaimTemplates:
   - metadata:
-      name: graphite-node-pv
+      name: data
       annotations:
         volume.beta.kubernetes.io/storage-class: ceph-rbd-default
     spec:
