@@ -28,10 +28,10 @@ spec:
         resources:
           limits:
             cpu: 2000m
-            memory: 2Gi
+            memory: 4Gi
           requests:
-            cpu: 500m
-            memory: 1Gi
+            cpu: 1000m
+            memory: 2Gi
         volumeMounts:
         - name: data
           mountPath: /opt/graphite/storage/whisper
@@ -39,7 +39,7 @@ spec:
   - metadata:
       name: data
       annotations:
-        volume.beta.kubernetes.io/storage-class: ceph-rbd-default
+        volume.beta.kubernetes.io/storage-class: graphite-ceph-rbd
     spec:
       accessModes: [ "ReadWriteOnce" ]
       resources:
